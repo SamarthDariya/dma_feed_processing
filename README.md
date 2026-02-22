@@ -43,53 +43,6 @@ Replay Engine
 
 ---
 
-## Setup
-
-### Prerequisites
-
-- Python 3.11+
-- PostgreSQL with TimescaleDB extension
-- Redis
-- Kafka / Redpanda
-
-### Install dependencies
-
-```bash
-pip install asyncpg aioredis aiokafka pydantic
-```
-
-### Configure infrastructure
-
-Update connection strings in `main.py`:
-
-```python
-# PostgreSQL / TimescaleDB
-db_pool = await asyncpg.create_pool(
-    user='postgres', password='password',
-    database='market_data', host='127.0.0.1'
-)
-
-# Redis
-redis_client = aioredis.from_url("redis://localhost", decode_responses=True)
-
-# Kafka
-consumer = AIOKafkaConsumer('raw_ticks', bootstrap_servers='localhost:9092', group_id="processing_group")
-producer = AIOKafkaProducer(bootstrap_servers='localhost:9092')
-```
-
-### Run
-
-```bash
-python main.py
-```
-
-On startup, the platform will:
-1. Initialize the TimescaleDB hypertable and indexes
-2. Create continuous aggregate views for 1m and 5m OHLCV candles
-3. Begin consuming from the `raw_ticks` Kafka topic
-
----
-
 ## Data Model
 
 ### `ticks` (TimescaleDB Hypertable)
